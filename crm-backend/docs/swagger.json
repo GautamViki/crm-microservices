@@ -1,0 +1,319 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/customers": {
+            "get": {
+                "description": "Retrieve a list of customers from the database or cache",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "customers"
+                ],
+                "summary": "List all customers",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.CustomersResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httpresponse.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/customers/cache": {
+            "get": {
+                "description": "Retrieve all customers from the cache",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "customers"
+                ],
+                "summary": "Get all cached customers",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.CustomersResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/customers/upload": {
+            "post": {
+                "description": "Upload and parse an Excel file to create multiple customer records",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "customers"
+                ],
+                "summary": "Upload customers from an Excel file",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Excel file",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/httpresponse.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httpresponse.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpresponse.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/customers/{id}": {
+            "put": {
+                "description": "Update customer details by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "customers"
+                ],
+                "summary": "Update a customer",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Customer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Customer details to update",
+                        "name": "customer",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Customer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.CustomerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httpresponse.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a customer by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "customers"
+                ],
+                "summary": "Delete a customer",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Customer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.CustomerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "controller.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "messages": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "dto.CustomerResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "customer": {
+                    "$ref": "#/definitions/models.Customer"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "messages": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "dto.CustomersResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "customers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Customer"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "messages": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "httpresponse.Response": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "messages": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "models.Customer": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "company": {
+                    "type": "string"
+                },
+                "county": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "firstName": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "lastName": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "postal": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "web": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
