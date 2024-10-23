@@ -1,0 +1,280 @@
+definitions:
+  dto.LoginRequest:
+    properties:
+      email:
+        type: string
+      mobile:
+        type: string
+      password:
+        type: string
+    type: object
+  dto.TokenResponse:
+    properties:
+      expires_in:
+        type: integer
+      token:
+        type: string
+      token_type:
+        type: string
+    type: object
+  dto.User:
+    properties:
+      country:
+        type: string
+      createdAt:
+        type: string
+      email:
+        type: string
+      entityId:
+        type: integer
+      firstName:
+        type: string
+      lastName:
+        type: string
+      middleName:
+        type: string
+      mobile:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  dto.UserRequest:
+    properties:
+      country:
+        type: string
+      email:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      middleName:
+        type: string
+      mobile:
+        type: string
+      password:
+        type: string
+    type: object
+  dto.UserResponse:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      messages:
+        items:
+          type: string
+        type: array
+      user:
+        $ref: '#/definitions/dto.User'
+    type: object
+  dto.UsersResponse:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      messages:
+        items:
+          type: string
+        type: array
+      total:
+        type: integer
+      users:
+        items:
+          $ref: '#/definitions/dto.User'
+        type: array
+    type: object
+  httpresponse.Response:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      messages:
+        items:
+          type: string
+        type: array
+    type: object
+info:
+  contact: {}
+paths:
+  /authorize:
+    get:
+      consumes:
+      - application/json
+      description: Validate the user's token
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpresponse.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpresponse.Response'
+      summary: Validate user token
+      tags:
+      - Users
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate a user and return a token
+      parameters:
+      - description: Login credentials
+        in: body
+        name: loginRequest
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/dto.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpresponse.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpresponse.Response'
+      summary: User login
+      tags:
+      - Users
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all users from the database
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UsersResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpresponse.Response'
+      summary: Get all users
+      tags:
+      - Users
+  /users/{email}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a user by email from the database
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Email of the user
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpresponse.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpresponse.Response'
+      summary: Get user by email
+      tags:
+      - Users
+  /users/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a user by ID from the database
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: ID of the user
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpresponse.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpresponse.Response'
+      summary: Get user by ID
+      tags:
+      - Users
+  /users/register:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user with the provided details
+      parameters:
+      - description: User data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpresponse.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpresponse.Response'
+      summary: Create a new user
+      tags:
+      - Users
+swagger: "2.0"

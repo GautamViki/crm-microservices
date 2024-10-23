@@ -1,0 +1,53 @@
+version: '3.8'
+services:
+  crm-service:
+    build:
+      context: ./../crm-service
+      dockerfile: ./../crm-service/crm-service.dockerfile
+    restart: always
+    ports:
+      - "3007:80"
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=root
+      - DB_CHARSET=utf8mb4
+      - DB_NAME=crm-project
+
+    depends_on:
+      - mysql
+
+  mysql:
+    image: 'mysql:latest'
+    ports:
+      - "3306:3306"
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: crm-project
+    volumes:
+      - ./db-data/mysql:/var/lib/mysql
+
+  authentication-service:
+    build:
+      context: ./../authentication-service
+      dockerfile: ./../authentication-service/authentication-service.dockerfile
+    restart: always
+    ports:
+      - "3008:80"
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=root
+      - DB_CHARSET=utf8mb4
+      - DB_NAME=crm-project
